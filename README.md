@@ -6,6 +6,8 @@ Static site for [esabbr.com](https://www.esabbr.com) migrated from Squarespace t
 
 This guide helps you migrate your domain from Squarespace to GitHub Pages while preserving Google Workspace email functionality.
 
+> **📄 Detailed DNS Records**: See [dns-details.md](./dns-details.md) for complete current and target DNS configurations.
+
 ### 🎯 Migration Overview
 
 When migrating from Squarespace to GitHub Pages, you need to:
@@ -16,22 +18,33 @@ When migrating from Squarespace to GitHub Pages, you need to:
 5. **Remove** HTTPS records (GitHub handles SSL automatically)
 6. **Keep** _domainconnect records
 
+### 📊 Current DNS Records (To Be Replaced)
+
+Your current Squarespace DNS configuration includes the following records that will be updated:
+
+| Host | Type | Priority | TTL | Data | Status |
+|------|------|----------|-----|------|--------|
+| @ | A | 0 | 4 hrs | 198.49.23.144 | ❌ Replace with GitHub IPs |
+| @ | A | 0 | 4 hrs | 198.185.159.144 | ❌ Replace with GitHub IPs |
+| @ | A | 0 | 4 hrs | 198.185.159.145 | ❌ Replace with GitHub IPs |
+| @ | A | 0 | 4 hrs | 198.49.23.145 | ❌ Replace with GitHub IPs |
+| www | CNAME | 0 | 4 hrs | ext-sq.squarespace.com | ❌ Replace with GitHub Pages |
+| @ | HTTPS | 0 | 4 hrs | alpn="h2,http/1.1" ipv4hint="..." | ❌ Remove (GitHub handles SSL) |
+| _domainconnect | CNAME | 0 | 4 hrs | _domainconnect.domains.squarespace.com | ✅ Keep |
+| google._domainkey | TXT | N/A | 1 hr | v=DKIM1; k=rsa; p=... | ✅ Keep |
+| @ | TXT | N/A | 1 hr | v=spf1 include:_spf.google.com ~all | ✅ Keep |
+| @ | MX | 1 | 1 hr | smtp.google.com | ✅ Keep |
+
 ### 📋 Step-by-Step DNS Configuration
 
 #### 1. Keep These Google Workspace Records (DO NOT DELETE)
 
 | Type | Name | Value | Purpose |
 |------|------|-------|---------|
-| MX | @ | 1 aspmx.l.google.com | Primary mail server |
-| MX | @ | 5 alt1.aspmx.l.google.com | Backup mail server |
-| MX | @ | 5 alt2.aspmx.l.google.com | Backup mail server |
-| MX | @ | 10 alt3.aspmx.l.google.com | Backup mail server |
-| MX | @ | 10 alt4.aspmx.l.google.com | Backup mail server |
+| MX | @ | 1 smtp.google.com | Primary mail server |
 | TXT | @ | v=spf1 include:_spf.google.com ~all | Email authentication |
-| TXT | google._domainkey | v=DKIM1; k=rsa; p=[YOUR_DKIM_KEY] | DKIM signing |
-| CNAME | _domainconnect | _domainconnect.gd.domaincontrol.com | Domain management |
-
-> **⚠️ Important**: The exact DKIM key value will be provided after repository creation.
+| TXT | google._domainkey | v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmSB1ZSYXMvmKUD9CDewuGe2XGLm664C525+/lVwzjcbDBM9gQkk/W3beAUran2PgiOlAtymEReHGR3gv5ZIOIlWFWR2n6kRxGe3aJcWWr6i1YZ4hu4NZ6ryrBr9CgeVO42Q4bZSOv4yXYaEj+pyIHsq0Nn0DVBuY74k7FwttqnvHfhxm7BCcd3aeCWbVXX5miKF5rwliRHT8LI84qHC5Waatz//jEWnJ9aMDrJ2hBkpwRhAh2iYDLV6WzcxGldr/EUF/YDGpXqaWNspsbhCEISOX0Cc4FbiV8QyQp0tHb8H/RsPaCEVUFRYGMOuhk2qJRVRiVr8lSFhAMtzJhVIqvwIDAQAB | DKIM signing |
+| CNAME | _domainconnect | _domainconnect.domains.squarespace.com | Domain management |
 
 #### 2. Add GitHub Domain Verification
 
